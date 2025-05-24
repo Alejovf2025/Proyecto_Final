@@ -4,19 +4,25 @@ import java.util.List;
 public class Animal {
     private String id;
     private String nombre;
-    private String especie;
     private Propietario propietario;
     private int edad;
     private List<HistorialMedico> lstHistorialMedico = new ArrayList<>();
+    private EspcieAnimal especie;
 
-    public Animal(String id, String nombre, String especie, Propietario propietario, int edad) {
+
+
+
+    public Animal(String id, String nombre,Propietario propietario, int edad, EspcieAnimal especie) {
         this.id = id;
         this.nombre = nombre;
-        this.especie = especie;
         this.propietario = propietario;
         this.edad = edad;
+        this.especie = especie;
 
     }
+
+
+
     public void agregarHistorial(HistorialMedico histAnimal){
         lstHistorialMedico.add(histAnimal);
     }
@@ -35,13 +41,7 @@ public class Animal {
         this.nombre = nombre;
     }
 
-    public String getEspecie() {
-        return especie;
-    }
 
-    public void setEspecie(String especie) {
-        this.especie = especie;
-    }
 
     public Propietario getPropietario() {
         return propietario;
@@ -67,8 +67,16 @@ public class Animal {
         this.lstHistorialMedico = lstHistorialMedico;
     }
 
+    public EspcieAnimal getEspecie() {
+        return especie;
+    }
+
+    public void setEspecie(EspcieAnimal especie) {
+        this.especie = especie;
+    }
+
     public String toString() {
-        return "Animal: " + nombre + ", Especie: " + especie + ", Edad: " + edad;
+        return "Animal: " + nombre + ", Especie: " + " Edad: " + edad + "Propietario " + propietario + "Especie " + especie;
     }
 }
 

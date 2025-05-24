@@ -4,9 +4,9 @@ public class Cita {
     private String hora;
     private Animal animal;
     private String motivo;
-    private String veterinario;
+    private TipoVeterinario veterinario;
 
-    public Cita(String id, String fecha, String hora, Animal animal, String motivo, String veterinario) {
+    public Cita(String id, String fecha, String hora, Animal animal, String motivo, TipoVeterinario veterinario) {
         this.id = id;
         this.fecha = fecha;
         this.hora = hora;
@@ -23,6 +23,26 @@ public class Cita {
     public String toString() {
         return "ID: " + id + ", Fecha: " + fecha + ", Hora: " + hora +
                 ", Animal: " + animal.getNombre() + ", Motivo: " + motivo + ", Veterinario: " + veterinario;
+    }
+
+    public String getIdAnimal() {
+        return id;
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public Animal getAnimal() {
+        return animal;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public TipoVeterinario getVeterinario() {
+        return veterinario;
     }
 }
 

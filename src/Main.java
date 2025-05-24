@@ -5,6 +5,10 @@ public class Main {
     public static void main(String[] args) {
         Scanner teclado = new Scanner(System.in);
         ClinicaVeterinaria clinica = new ClinicaVeterinaria();
+        clinica.cargarPropietariosDesdeArchivo();
+        clinica.cargarAnimalesDesdeArchivo();
+        clinica.cargarCitasDesdeArchivo();
+        clinica.cargarHistorialesDesdeArchivo();
         int opc;
         do{
             System.out.println(
@@ -16,13 +20,16 @@ public class Main {
             4) Ver citas del dia
             5) Registrar Diagnostico
             6) Ver historial medico de un animal
-            7) Salir
-            Digite una opcion : 
-                                                                                      
-                            """
+            7) Salir                                                                        
+                           """
             );
-            opc = teclado.nextInt();
-            teclado.nextLine();
+            try {
+                System.out.print("Digite una opción: ");
+                opc = Integer.parseInt(teclado.nextLine());
+            } catch (NumberFormatException e) {
+                opc = -1; 
+            }
+
 
             switch (opc){
                 case 1 ->{
@@ -51,14 +58,21 @@ public class Main {
                     if(propietario != null){
                         System.out.print("ID del animal: ");
                         String idAnimal = teclado.nextLine();
+                        EspcieAnimal especie = null;
+                        do {
+                            System.out.println("Escriba la especie del animal que posee (Perro, Gato, Loro, Conejo, Hamster):");
+                            String entrada = teclado.nextLine();
+                            especie = EspcieAnimal.validacion(entrada);
+                            if(especie == null){
+                                System.out.println("Especie exótica (no está dentro de nuestros servicios). Intente de nuevo.");
+                            }
+                        } while(especie == null);
                         System.out.print("Nombre: ");
                         String nombreAnimal = teclado.nextLine();
-                        System.out.print("Especie: ");
-                        String especie = teclado.nextLine();
                         System.out.print("Edad: ");
                         int edad = teclado.nextInt();
                         teclado.nextLine();
-                        clinica.registrarAnimal(idAnimal,nombreAnimal,especie,edad,propietario);
+                        clinica.registrarAnimal(idAnimal,nombreAnimal,edad,propietario,especie);
 
                     }else{
                         System.out.println("Propietario no encontrado");
@@ -66,20 +80,34 @@ public class Main {
 
                 }
                 case 3->{
-                    String fecha;
+
                     System.out.println("Digte la ID del animal : ");
                     String idAnimal = teclado.next();
                     teclado.nextLine();
                     Animal animal = clinica.buscarAnimalPorID(idAnimal);
                     if(animal != null){
+                        String fecha;
+                        do{
                         System.out.print("Fecha (YYYY-MM-DD): ");
                         fecha =  teclado.nextLine();
+                        if(!ClinicaVeterinaria.fechaValida(fecha)){
+                            System.out.println("Fecha invalida. Intentalo otra vez");
+                        }
+                        }while(!ClinicaVeterinaria.fechaValida(fecha));
                         System.out.print("Hora (HH:MM): ");
                         String hora = teclado.nextLine();
                         System.out.print("Motivo: ");
                         String motivo = teclado.nextLine();
-                        System.out.print("Veterinario: ");
-                        String veterinario = teclado.nextLine();
+                        TipoVeterinario veterinario = null;
+                        do{
+                            System.out.print("Veterinario (DR_MARVOTA / DR_NEYMAR) :  ");
+                            String entrada = teclado.nextLine();
+                            veterinario = TipoVeterinario.validacionVeterinario(entrada);
+                            if(veterinario == null){
+                                System.out.println("Especie exótica (no está dentro de nuestros servicios). Intente de nuevo.");
+                            }
+                        }while(veterinario == null);
+
                         clinica.agendarCita(idAnimal,fecha, hora, animal, motivo, veterinario);
                         System.out.println("la fehca es : " + fecha);
                     }else{
@@ -107,15 +135,33 @@ public class Main {
                     teclado.nextLine();
                     Animal animalDiag = clinica.buscarAnimalPorID(id);
                     if(animalDiag !=null){
-                        System.out.print("Fecha (YYYY-MM-DD): ");
-                        String fechaDiag = teclado.nextLine();
+
+
                         System.out.print("Diagnóstico: ");
                         String diagnostico = teclado.nextLine();
                         System.out.print("Tratamiento: ");
                         String tratamiento = teclado.nextLine();
-                        System.out.print("Veterinario: ");
-                        String veterinarioDiag = teclado.nextLine();
-                        HistorialMedico histAnimal = new HistorialMedico(fechaDiag, diagnostico, tratamiento, veterinarioDiag);
+
+                        TipoVeterinario veterinario = null;
+                        do{
+                        System.out.print("Veterinario (DR_MARVOTA / DR_NEYMAR) :  ");
+                        String entrada = teclado.nextLine();
+                        veterinario = TipoVeterinario.validacionVeterinario(entrada);
+                            if(veterinario == null){
+                                System.out.println("Especie exótica (no está dentro de nuestros servicios). Intente de nuevo.");
+                            }
+                        }while(veterinario == null);
+                        String fecha;
+                        do{
+                            System.out.print("Fecha (YYYY-MM-DD): ");
+                            fecha =  teclado.nextLine();
+                            if(!ClinicaVeterinaria.fechaValida(fecha)){
+                                System.out.println("Fecha invalida. Intentalo otra vez");
+                            }
+                        }while(!ClinicaVeterinaria.fechaValida(fecha));
+
+
+                        HistorialMedico histAnimal = new HistorialMedico(fecha, diagnostico, tratamiento, veterinario);
                         clinica.registrarDiagnostico(animalDiag, histAnimal);
                         System.out.println("Diagnóstico registrado");
                     }else{
@@ -144,6 +190,10 @@ public class Main {
                 }
                 case 7->{
                     System.out.println("Bayyyy");
+                    clinica.guardarPropietarios();
+                    clinica.guardarAnimales();
+                    clinica.guardarCitas();
+                    clinica.guardarHistoriales();
                 }
                 default -> System.out.println("Opcion invalida");
             }
@@ -153,3 +203,10 @@ public class Main {
 
     }
 }
+
+//Tener una lista para la especie de animales domesticos(Perros,gatos, loros, conejos,hamster)  y veterinarios
+//Validar fechar existentes
+//Validar solo numneros en el switch
+//Archivo TXT
+//Validacion de fecha
+//crear una lista "ENUM"
